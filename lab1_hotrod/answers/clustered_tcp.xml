@@ -74,7 +74,7 @@
             </logger>
 
             <root-logger>
-                <level name="TRACE"/>
+                <level name="INFO"/>
                 <handlers>
                     <handler name="CONSOLE"/>
                     <handler name="FILE"/>
@@ -102,9 +102,7 @@
                     <locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false"/>
                     <transaction mode="NONE"/>
                 </distributed-cache>
-		<!-- MDD
                 <distributed-cache name="namedCache" mode="SYNC" start="EAGER"/>
-		-->
             </cache-container>
             <cache-container name="security"/>
         </subsystem>

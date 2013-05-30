@@ -37,11 +37,12 @@ In this lab, we will connect to caches configured in the different modes, namely
 
 ### Configuring a Standalone Cache
 The **standalone** variety is the simplest cache mode as it does not need to discover or communicate its state with other 
-members.  For convenience, JBoss Data Grid Server provides a basic startup script and configuration file demonstrating
+members.  For convenience, JBoss Data Grid Server provides a basic startup script and configuration files demonstrating
 a standalone cache.  These files can be found in the following locations:
     
     <JDG_SERVER_HOME>/bin/standalone.[sh/bat]
-    <JDG_SERVER_HOME>/standalone/configuration/standalone.xml      
+    <JDG_SERVER_HOME>/standalone/configuration/standalone.xml
+    <JDG_SERVER_HOME>/standalone/configuration/standalone.[conf | conf.bat]
 
 By default, the standalone script starts up a streamlined JBoss EAP server configured with the
 standalone.xml file.  Alternatively, the configuration file can be overridden by passing the '-c'
@@ -154,9 +155,103 @@ Particularly, the information provided in:
     * jboss-infinispan -> Server -> Hot Rod -> Transport -> Attributes
  
 
-### Configuring JGroups for TCP in the JBoss Data Grid Server
+### JBoss Data Grid Server Clustered Configuration
 
-JBoss Data Grid Server uses JGroups for discovery and transport in a clustered topology.  By default, the JBoss Data Grid server uses a 
-JGroups stack that uses UDP for both discovery and transport.  We will be using a JGroups stack that uses TCP for discovery and transport
-for this lab as the clusters will all reside on the participant's workstation.
+JBoss Data Grid Server uses JGroups for discovery and transport in a clustered topology.  The server defaults to a 
+JGroups stack that uses UDP for both discovery and transport.  We will be using a JGroups stack that uses TCP for 
+discovery and transport for this lab as the clusters will all reside on the participant's workstation.
 
+Similar to a standalone grid, JDG provides a startup script and template configuration file for starting up the server
+in one of the clustered modes.  The relevant configuration files are the following:  
+
+    <JDG_SERVER_HOME>/bin/clustered.[sh | bat]
+    <JDG_SERVER_HOME>/standalone/configuration/clustered.xml
+    <JDG_SERVER_HOME>/standalone/configuration/clustered.[conf | conf.bat]
+    
+The aforementioned files provide configuration for the subsystems required in a clustered topology (e.g. JGroups).
+    
+### Configuring a full JGroups TCP Stack in the JBoss Data Grid Server
+
+If you take a look at the contents of clustered.xml, you will see that there is already a stack named *tcp* within
+the *jgroups* subsystem.  However, the discovery is still being done over multicast using MPING.  We will create a 
+template to be used for the various types of clustered caches in this lab.  Perform the following:
+
+1.  In the same configuration directory, make a copy of clustered.xml and name it clustered_tcp.xml
+2.  Remove the following MPING entry in the TCP Stack Definition:
+
+        <protocol type="MPING" socket-binding="jgroups-mping"/>
+    
+3.  Replace with the following TCPPING entry:
+
+        <protocol type="TCPPING">
+			<property name="initial_hosts">127.0.0.1[7600],127.0.0.1[7700]</property>
+			<property name="num_initial_members">1</property>
+			<property name="port_range">1</property>
+		</protocol>
+		
+*NOTE: The 'initial_hosts' property contains sockets on the loopback interface with port numbers that differ by 100.  In a later part, we will configure the instances with a port offset of 100*
+
+### Configuring a Replicated Cache
+
+We will use the *clustered_tcp.xml* file as a template to create a replicated cache that can be consumed by the 
+Football Manager Client utilized in the previous section.   Perform the following:
+
+1.  In the same configuration directory, make a copy of clustered_tcp.xml and name it clustered_replicated.xml
+2.  Remove the following 'clustered' cache container from the infinispan-server-core subsystem:
+
+		<cache-container name="clustered" default-cache="default">
+	        <transport executor="infinispan-transport" lock-timeout="60000"/>
+	        <distributed-cache name="default" mode="SYNC" segments="20" owners="2" remote-timeout="30000" start="EAGER">
+	            <locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false"/>
+	            <transaction mode="NONE"/>
+	        </distributed-cache>
+	        <distributed-cache name="memcachedCache" mode="SYNC" segments="20" owners="2" remote-timeout="30000" start="EAGER">
+	            <locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false"/>
+	            <transaction mode="NONE"/>
+	        </distributed-cache>
+	        <distributed-cache name="namedCache" mode="SYNC" start="EAGER"/>
+	    </cache-container>
+    
+3.  Replace with the following 'teams' cache-container:
+
+		<cache-container name="clustered" default-cache="teams">
+			<transport executor="infinispan-transport" lock-timeout="60000"/>
+         	<replicated-cache name="teams" mode="SYNC" start="EAGER">
+				<locking isolation="NONE" acquire-timeout="30000" concurrency-level="1000" striping="false" />
+				<transaction mode="NONE" />
+			</replicated-cache>
+			<distributed-cache name="memcachedCache" mode="SYNC" segments="20" owners="2" remote-timeout="30000" start="EAGER">
+            	<locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false"/>
+				<transaction mode="NONE"/>
+			</distributed-cache>
+      	</cache-container>
+
+
+*NOTE: Ensure the 'security' cache container remains*
+
+### Running the Replicated Cache
+
+In a typical clustered deployment, cache nodes in a cluster would be deployed on different machines which contain 
+the same server binaries and configuration (well, that is mostly the case).  This type of environment can be simulated 
+on a standalone workstation by starting up JVM processes from copies of binaries with services bound to different sockets.
+This can be done by either by configuring the processes to bind to different network interfaces or using port-offsets 
+on the same network interface.  Using a port-offset is much less complicated than the alternatives and will be done 
+for this lab.  Perform the following:
+
+1.  Make two copies of the binaries for the JDG Server, named 'node1' and 'node2'.  (*Note: Different copies of the server binaries are used as some shared state about the running container is kept.*)
+2.  In a console, navigate to the /bin directory of node1 and run the following (*Note: Unique server name attributes are required for each node.  Selecting the TCP JGroups stack from the configuration.*):
+		
+		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node1 -Djboss.default.jgroups.stack=tcp
+		
+3.  In a separate console, navigate to the /bin directory of node1 and run the following (*Note: port-offset increments the port numbers to prevent clashes between the instances*):
+
+		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node2 -Djboss.default.jgroups.stack=tcp -Djboss.socket.binding.port-offset=100
+		
+*NOTE: The process should be run by a user with permissions to set up a reasonable amount of threads.  In linux, you should use sudo or ensure your user is able to start an adequate amount of processes.*
+
+The logs should show something similar to the following if the two instances have successfully joined a cluster:
+
+	INFO  [org.infinispan.remoting.transport.jgroups.JGroupsTransport] (MSC service thread 1-7) ISPN000094: Received new cluster view: [node1/clustered|1] [node1/clustered, node2/clustered]
+
+
+   
