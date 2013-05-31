@@ -137,6 +137,7 @@ Basic usage scenarios can look like this (keyboard shortcuts will be shown to yo
         rt  -  remove a team
         rp  -  remove a player from a team
         p   -  print all teams and players
+        c   -  clear all teams
         q   -  quit
         
 Type `q` one more time to exit the application.
@@ -197,7 +198,7 @@ template to be used for the various types of clustered caches in this lab.  Perf
  on all other nodes.  We will use the *clustered_tcp.xml* file as a template to create a replicated cache that 
  can be consumed by the Football Manager Client utilized in the previous section.  Perform the following:
 
-1.  In the same configuration directory, make a copy of clustered_tcp.xml and name it clustered_replicated.xml
+1.  In the same configuration directory, make a copy of clustered\_tcp.xml and name it clustered\_replicated.xml
 2.  Remove the following 'clustered' cache container from the infinispan-server-core subsystem:
 
 		<cache-container name="clustered" default-cache="default">
@@ -314,6 +315,72 @@ Perform the following to understand the effects of inducing a topology change:
 
 3.  In the console, type the 'p' command to print all teams.  The list should be identical to step 1 
 as the client has transparently failed over to the identical, replicated instance on port 11322.  
+
+### Configuring and Starting the Distributed Cache
+
+The configuration for a distributed cache is very similar to a replicated cache.  Both require
+configuration of a connector, jgroups, and caches in the cache-container.  The tag for a distributed
+cache in JDG Server is, as you would guess, the *<distributed-cache>* tag.  Because the configurations is similar to
+a replicated cache, we will use the configuration from the previous section as a baseline.  To set up the
+cache, perform the following:
+
+1.  In the same configuration directory, make a copy of clustered\_replicated.xml and name it clustered\_distributed.xml
+(_NOTE: This must be done for each instance_)
+
+2.  Remove the following section defining the replicated cache:
+
+		<replicated-cache name="teams" mode="SYNC" start="EAGER">
+			<locking isolation="NONE" acquire-timeout="30000" concurrency-level="1000" striping="false" />
+			<transaction mode="NONE" />
+		</replicated-cache>
+		
+3.  Replace it with the following distributed cache definition:
+
+		<distributed-cache name="teams" mode="SYNC" segments="20" owners="2" remote-timeout="30000" start="EAGER">
+        	<locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false"/>
+			<transaction mode="NONE"/>
+		</distributed-cache>
+		
+### Verifying the Behavior of the Distributed Cache
+
+1.  Start up two instances of the cache as you did for the replicated cache, substituting in the clusered\_distributed.xml.
+_NOTE: Remember to name the instances and do a port-offset for the second node._
+
+2.  Start up two jconsole instances and point them to the two JDG Server processes.
+
+3.  Start up the Football Manager Client and start performing operations that will modify the cache (e.g. add team).
+
+4.  Interrogate the numberOfEntries for each instance of the cache to observer the distributed cache behavior.
+
+### Configure Number of Owners
+
+In distributed mode, the 'owners' parameter indicates the number of instances that will store each entry.  In a 
+previous section, we configured the distributed cache to have a preset number of owners (2).  When there are two
+owners and two instances in the distributed cache, each instance will get a copy of the entry.  In a more realistic
+deployment there would be many more instances of JDG Server to distribute the entries across.  We will modify the
+configuration to be able to see distribution in action by doing the following:
+
+1.  Stop the two instances of JDG Server (Ctrl-C) and jconsole
+
+2.  In each instance, udpate the clustered\_distributed.xml file, changing the owners from '2' to '1' in the 'teams'
+cache. (*NOTE: This is an unusual setting as a lack of backups limits resiliency*)
+
+3.  Restart both caches as before
+
+4.  Start up two jconsole instances to point to each JDG node
+
+5.  Start up the Football Manager Client
+
+6.  In the client, press the 'c' command to clear the cache
+
+7.  Interrogate the numberOfEntries for each instance to verify the numberOfEntries is '0' for each
+
+8.  A secret command in the Football Manager Client (not available in the menu) has been added to create 
+1000 random team names.  Type 'upupdowndownleftrighleftrighbaba' in the console (*simply 'up' will work as well*)
+
+9.  In jconsole, interrogate the numberOfEntries for each node.  The keys should be distributed between the two nodes.
+  
+		
 
  
 

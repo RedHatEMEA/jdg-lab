@@ -66,6 +66,10 @@ public class FootballManager {
 
     public void addTeam() {
         String teamName = con.readLine(msgEnterTeamName);
+        if(teamName!=null && teamName.toUpperCase().equals("COWBOYS")){
+        	con.printf("ERROR:  The Cowboys are not a real team!!\n");
+        	return;
+        }
         @SuppressWarnings("unchecked")
         List<String> teams = (List<String>) cache.get(teamsKey);
         if (teams == null) {
