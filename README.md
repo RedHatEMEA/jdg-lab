@@ -193,8 +193,9 @@ template to be used for the various types of clustered caches in this lab.  Perf
 
 ### Configuring a Replicated Cache
 
-We will use the *clustered_tcp.xml* file as a template to create a replicated cache that can be consumed by the 
-Football Manager Client utilized in the previous section.   Perform the following:
+ In a replicated cache all nodes in a cluster hold all keys i.e. if a key exists on one nodes, it will also exist 
+ on all other nodes.  We will use the *clustered_tcp.xml* file as a template to create a replicated cache that 
+ can be consumed by the Football Manager Client utilized in the previous section.  Perform the following:
 
 1.  In the same configuration directory, make a copy of clustered_tcp.xml and name it clustered_replicated.xml
 2.  Remove the following 'clustered' cache container from the infinispan-server-core subsystem:
@@ -252,6 +253,70 @@ for this lab.  Perform the following:
 The logs should show something similar to the following if the two instances have successfully joined a cluster:
 
 	INFO  [org.infinispan.remoting.transport.jgroups.JGroupsTransport] (MSC service thread 1-7) ISPN000094: Received new cluster view: [node1/clustered|1] [node1/clustered, node2/clustered]
+	
+### View Replicated Cache Behavior
+
+The replicated cache will be modified using the same Football Manager application and the state of the two 
+instances of the cache will be visualized using jconsole.  As before, start up the client by doing the following in a console:
+
+1.  In a console, navigate to the root of the basic-hotrod-client project
+2.  Type the following command into the console: 
+
+		mvn exec:java		
+		
+*NOTE: The hot rod client should log the topology information in the console*
+
+Add teams and players to start populating the cache and open up jconsole (as the same user that started the JDG servers)
+for each of the cache instances.  There should be two java processes that start with jboss-modules.  In order to determine
+which cache instance you are looking at, you could either:
+
+* Navigate in jconsole to jgroups -> channel -> clustered -> attributes (name = 'name')
+* Navigate to jboss.infinispan -> Server -> Hot Rod -> Transport -> Attributes (name = 'port') *(NOTE: node2 would have a higher port number)*
+
+Using jconsole, interrogate each cache to identify the 'numberOfEntries' attribute in the 'teams' cache.  The value
+for each cache should be identical.  Using the Football Manager Client, add more teams and verify that the 'numberOfEntries'
+attribute stays consistent between the two instances.
+
+*Extra Credit: If you have enough spare resources on your machine, attempt to add another replicated instance.*
+
+### Inducing a Topology Change
+
+The Football Manager client, by default, configures the hot rod client to point to localhost:11222.  Relevant excerpts
+from the basic-hotrod-client project are the following:
+
+	org.jboss.as.quickstarts.datagrid.hotrod.FootballManager
+	
+		public static String jdgProperty(String name) {
+	    	if(System.getProperty(name) != null){    		
+	    		return System.getProperty(name);
+	    	}
+	        Properties props = new Properties();
+	        try {
+	            props.load(FootballManager.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE));
+	        } catch (IOException ioe) {
+	            throw new RuntimeException(ioe);
+	        }
+	        return props.getProperty(name);
+	    }
+    
+    jdg.properties
+    
+	    jdg.host=localhost
+		jdg.hotrod.port=11222
+	
+Perform the following to understand the effects of inducing a topology change:
+
+1.  In the console, type the 'p' command to print all teams.  
+
+2.  Shutdown the instance where the Hot Rod Server is bound to port 11222 
+(node1, if you've been following the instructions).  This is the node the application is pointed to.  
+(*NOTE: The Football Manager Console should log a message about a topology change*)
+
+3.  In the console, type the 'p' command to print all teams.  The list should be identical to step 1 
+as the client has transparently failed over to the identical, replicated instance on port 11322.  
+
+ 
+
 
 
    

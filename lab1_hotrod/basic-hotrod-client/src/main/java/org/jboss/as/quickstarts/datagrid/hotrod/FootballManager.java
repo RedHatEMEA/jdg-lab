@@ -156,6 +156,9 @@ public class FootballManager {
     }
 
     public static String jdgProperty(String name) {
+    	if(System.getProperty(name) != null){    		
+    		return System.getProperty(name);
+    	}
         Properties props = new Properties();
         try {
             props.load(FootballManager.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE));
