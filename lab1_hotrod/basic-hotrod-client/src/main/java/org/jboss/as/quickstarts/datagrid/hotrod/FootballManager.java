@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
+
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 
@@ -38,8 +40,9 @@ public class FootballManager {
     private static final String msgEnterTeamName = "Enter team name: ";
     private static final String initialPrompt = "Choose action:\n" + "============= \n" + "at  -  add a team\n"
             + "ap  -  add a player to a team\n" + "rt  -  remove a team\n" + "rp  -  remove a player from a team\n"
-            + "p   -  print all teams and players\n" + "q   -  quit\n";
+            + "p   -  print all teams and players\nc   -  clear entries\n" + "q   -  quit\n";
     private static final String teamsKey = "teams";
+    private final Random rand = new Random(343);
 
     private Console con;
     private RemoteCacheManager cacheManager;
@@ -126,6 +129,28 @@ public class FootballManager {
             }
         }
     }
+    
+    public void clear(){
+    	cache.clear();
+    }
+    
+    public void randomlyPopluate(){
+    	clear();
+    	@SuppressWarnings("unchecked")
+    	List<String> teams = (List<String>) cache.get(teamsKey);
+        if (teams == null) {
+            teams = new ArrayList<String>();
+        }
+    	for(int i=0; i < 1000; i++){
+    		//Making the team names somewhat random
+    		String teamName= "Team-" + i + "-" + rand.nextInt(10000);
+            Team t = new Team(teamName);
+            cache.put(teamName, t);
+            teams.add(teamName);
+            // maintain a list of teams under common key            
+    	}
+    	cache.put(teamsKey, teams);
+    }
 
     public void stop() {
         cacheManager.stop();
@@ -148,6 +173,10 @@ public class FootballManager {
                 manager.removePlayer();
             } else if ("p".equals(action)) {
                 manager.printTeams();
+            } else if (action.contains("c")){
+            	manager.clear();
+            } else if (action.contains("up")){
+            	manager.randomlyPopluate();
             } else if ("q".equals(action)) {
                 manager.stop();
                 break;

@@ -72,6 +72,9 @@
             <logger category="jacorb.config">
                 <level name="ERROR"/>
             </logger>
+	    <logger category="org.jgroups">
+		<level name="DEBUG"/>
+	    </logger>
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
@@ -91,17 +94,16 @@
             <datasources/>
         </subsystem>
         <subsystem xmlns="urn:infinispan:server:core:5.2" default-cache-container="clustered">
-            <cache-container name="clustered" default-cache="default">
-                <transport executor="infinispan-transport" lock-timeout="60000"/>
-                <distributed-cache name="default" mode="SYNC" segments="20" owners="2" remote-timeout="30000" start="EAGER">
+            <cache-container name="clustered" default-cache="teams">
+		<transport executor="infinispan-transport" lock-timeout="60000"/>
+                <distributed-cache name="teams" mode="SYNC" segments="20" owners="1" remote-timeout="30000" start="EAGER">
                     <locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false"/>
                     <transaction mode="NONE"/>
-                </distributed-cache>
+                </distributed-cache>                
                 <distributed-cache name="memcachedCache" mode="SYNC" segments="20" owners="2" remote-timeout="30000" start="EAGER">
                     <locking isolation="READ_COMMITTED" acquire-timeout="30000" concurrency-level="1000" striping="false"/>
                     <transaction mode="NONE"/>
                 </distributed-cache>
-                <distributed-cache name="namedCache" mode="SYNC" start="EAGER"/>
             </cache-container>
             <cache-container name="security"/>
         </subsystem>
@@ -143,7 +145,14 @@
             </stack>
             <stack name="tcp">
                 <transport type="TCP" socket-binding="jgroups-tcp"/>
+		<!--
                 <protocol type="MPING" socket-binding="jgroups-mping"/>
+		-->
+		<protocol type="TCPPING">
+			<property name="initial_hosts">127.0.0.1[7600],127.0.0.1[7700]</property>
+			<property name="num_initial_members">1</property>
+			<property name="port_range">1</property>
+		</protocol>
                 <protocol type="MERGE2"/>
                 <protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/>
                 <protocol type="FD"/>
