@@ -1,0 +1,41 @@
+<div class="row-fluid">
+    <div class="span12">
+        <h2 class="special-title light-font"><%=show.event.name%>
+            <small><%=show.venue.name%>, <%=new Date(performance.date).toPrettyString()%></p></small>
+        </h2>
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span6 well">
+       <h3 class="page-header">Select tickets</h3>
+        <form class="form-horizontal">
+        <div id="sectionSelectorPlaceholder">
+            <div class="control-group">
+                <label class="control-label" for="sectionSelect"><strong>Section</strong></label>
+                <div class="controls">
+                    <select id="sectionSelect">
+                        <option value="-1" selected="true">Choose a section</option>
+                        <% _.each(sections, function(section) { %>
+                        <option value="<%=section.id%>"><%=section.name%> - <%=section.description%></option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+        </div>
+        </form>
+        <div id="ticketCategoriesViewPlaceholder"></div>
+    </div>
+    <div id="request-summary" class="span5 offset1 well">
+        <h3 class="page-header">Order summary</h3>
+        <div id="ticketSummaryView" class="row-fluid"/>
+        <h3 class="page-header">Checkout</h3>
+        <div class="row-fluid">
+            <form class="form-search">
+            <input type='email' id="email" placeholder="Email" required/>
+            <input type='button' class="btn btn-primary" name="submit" value="Checkout"
+                   disabled="true"/>
+            <p class="help-block error-notification"  id="error-email"></p>
+            </form>
+        </div>
+    </div>
+</div>

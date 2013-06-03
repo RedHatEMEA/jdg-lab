@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="page" value="#{sectionBean.page}"/>
+		<f:event type="preRenderView" listener="#{sectionBean.paginate}"/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="Search Section entities"/>
+
+	<ui:define name="header">
+		Section
+	</ui:define>
+
+	<ui:define name="subheader">
+		Search Section entities
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:form id="search">
+			<f:validateBean disabled="true">
+				<h:panelGroup styleClass="search">
+
+					<h:panelGrid columnClasses="label,component,required" columns="3">
+						<h:outputLabel for="sectionBeanExampleName" value="Name:"/>
+						<h:panelGroup>
+							<h:inputText id="sectionBeanExampleName" value="#{sectionBean.example.name}"/>
+							<h:message for="sectionBeanExampleName" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="sectionBeanExampleDescription" value="Description:"/>
+						<h:panelGroup>
+							<h:inputText id="sectionBeanExampleDescription" value="#{sectionBean.example.description}"/>
+							<h:message for="sectionBeanExampleDescription" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="sectionBeanExampleNumberOfRows" value="Number Of Rows:"/>
+						<h:panelGroup>
+							<rich:inputNumberSpinner cycled="false" id="sectionBeanExampleNumberOfRows" maxValue="999999999" value="#{sectionBean.example.numberOfRows}"/>
+							<h:message for="sectionBeanExampleNumberOfRows" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="sectionBeanExampleRowCapacity" value="Row Capacity:"/>
+						<h:panelGroup>
+							<rich:inputNumberSpinner cycled="false" id="sectionBeanExampleRowCapacity" maxValue="999999999" value="#{sectionBean.example.rowCapacity}"/>
+							<h:message for="sectionBeanExampleRowCapacity" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="sectionBeanExampleVenue" value="Venue:"/>
+						<h:panelGroup>
+							<h:selectOneMenu converter="#{venueBean.converter}" id="sectionBeanExampleVenue" value="#{sectionBean.example.venue}">
+								<f:selectItem/>
+								<f:selectItems value="#{venueBean.all}"/>
+							</h:selectOneMenu>
+							<h:message for="sectionBeanExampleVenue" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+					</h:panelGrid>
+					<h:panelGroup styleClass="buttons">
+						<h:commandLink value="Search" action="#{sectionBean.search}" styleClass="btn btn-primary"/>
+						<h:commandLink value="Create New" action="#{sectionBean.create}" styleClass="btn btn-primary"/>
+					</h:panelGroup>
+				</h:panelGroup>
+			</f:validateBean>
+			
+			<h:dataTable id="sectionBeanPageItems" styleClass="data-table" value="#{sectionBean.pageItems}" var="_item">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Venue"/>
+					</f:facet>
+					<h:link outcome="/admin/section/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="itemVenue" value="#{_item.venue}"/>
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<ui:include src="/resources/scaffold/paginator.xhtml">
+				<ui:param name="paginatorBean" value="#{sectionBean}"/>
+			</ui:include>
+		</h:form>
+			
+	</ui:define>
+
+</ui:composition>

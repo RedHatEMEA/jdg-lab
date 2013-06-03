@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="page" value="#{bookingBean.page}"/>
+		<f:event type="preRenderView" listener="#{bookingBean.paginate}"/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="Search Booking entities"/>
+
+	<ui:define name="header">
+		Booking
+	</ui:define>
+
+	<ui:define name="subheader">
+		Search Booking entities
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:form id="search">
+			<f:validateBean disabled="true">
+				<h:panelGroup styleClass="search">
+
+					<h:panelGrid columnClasses="label,component,required" columns="3">
+						<h:outputLabel for="bookingBeanExampleCancellationCode" value="Cancellation Code:"/>
+						<h:panelGroup>
+							<h:inputText id="bookingBeanExampleCancellationCode" value="#{bookingBean.example.cancellationCode}"/>
+							<h:message for="bookingBeanExampleCancellationCode" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="bookingBeanExampleContactEmail" value="Contact Email:"/>
+						<h:panelGroup>
+							<h:inputText id="bookingBeanExampleContactEmail" value="#{bookingBean.example.contactEmail}"/>
+							<h:message for="bookingBeanExampleContactEmail" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="bookingBeanExamplePerformance" value="Performance:"/>
+						<h:panelGroup>
+							<h:selectOneMenu converter="#{performanceBean.converter}" id="bookingBeanExamplePerformance" value="#{bookingBean.example.performance}">
+								<f:selectItem/>
+								<f:selectItems value="#{performanceBean.all}"/>
+							</h:selectOneMenu>
+							<h:message for="bookingBeanExamplePerformance" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+					</h:panelGrid>
+					<h:panelGroup styleClass="buttons">
+						<h:commandLink value="Search" action="#{bookingBean.search}" styleClass="btn btn-primary"/>
+						<h:commandLink value="Create New" action="#{bookingBean.create}" styleClass="btn btn-primary"/>
+					</h:panelGroup>
+				</h:panelGroup>
+			</f:validateBean>
+			
+			<h:dataTable id="bookingBeanPageItems" styleClass="data-table" value="#{bookingBean.pageItems}" var="_item">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Created On"/>
+					</f:facet>
+					<h:link outcome="/admin/booking/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="itemCreatedOn" value="#{_item.createdOn}">
+							<f:convertDateTime/>
+						</h:outputText>
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<ui:include src="/resources/scaffold/paginator.xhtml">
+				<ui:param name="paginatorBean" value="#{bookingBean}"/>
+			</ui:include>
+		</h:form>
+			
+	</ui:define>
+
+</ui:composition>

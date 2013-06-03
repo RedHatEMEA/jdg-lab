@@ -1,0 +1,14 @@
+<% if (ticketPrices.length > 0) { %>
+    <form name="ticketCategories">
+    <h4>Select tickets by category</h4>
+    <% _.each(ticketPrices, function(ticketPrice) { %>
+      <div id="ticket-category-input-<%=ticketPrice.id%>"/>
+
+      <fieldset data-role="fieldcontain">
+         <label for="ticket-<%=ticketPrice.id%>"><%=ticketPrice.ticketCategory.description%>($<%=ticketPrice.price%>)</label>
+        <input id="ticket-<%=ticketPrice.id%>" data-tm-id="<%=ticketPrice.id%>" type="number" placeholder="Enter value"
+               name="tickets"/>
+      </fieldset>
+   <% }) %>
+   </form>
+<% } %>

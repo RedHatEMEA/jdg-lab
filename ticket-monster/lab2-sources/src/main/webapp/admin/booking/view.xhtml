@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:forgeview="http://jboss.org/forge/view"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="id" value="#{bookingBean.id}"/>
+		<f:event type="preRenderView" listener="#{bookingBean.retrieve}"/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="View Booking"/>
+
+	<ui:define name="header">
+		Booking
+	</ui:define>
+
+	<ui:define name="subheader">
+		View existing Booking
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:panelGrid columnClasses="label,component,required" columns="3">
+			<h:outputLabel for="bookingBeanBookingTotalTicketPrice" value="Total Ticket Price:"/>
+			<h:outputText id="bookingBeanBookingTotalTicketPrice" value="#{bookingBean.booking.totalTicketPrice}"/>
+			<h:outputText/>
+			<h:outputLabel for="bookingBeanBookingTickets" value="Tickets:"/>
+			<h:dataTable id="bookingBeanBookingTickets" styleClass="data-table" value="#{forgeview:asList(bookingBean.booking.tickets)}" var="_item">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Ticket Category"/>
+					</f:facet>
+					<h:link outcome="/admin/ticket/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="itemTicketCategory" value="#{_item.ticketCategory}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Seat"/>
+					</f:facet>
+					<h:link outcome="/admin/ticket/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="itemSeat" value="#{_item.seat}"/>
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<h:outputText/>
+			<h:outputLabel for="bookingBeanBookingCreatedOn" value="Created On:"/>
+			<h:outputText id="bookingBeanBookingCreatedOn" value="#{bookingBean.booking.createdOn}">
+				<f:convertDateTime/>
+			</h:outputText>
+			<h:outputText/>
+			<h:outputLabel for="bookingBeanBookingCancellationCode" value="Cancellation Code:"/>
+			<h:outputText id="bookingBeanBookingCancellationCode" value="#{bookingBean.booking.cancellationCode}"/>
+			<h:outputText/>
+			<h:outputLabel for="bookingBeanBookingContactEmail" value="Contact Email:"/>
+			<h:outputText id="bookingBeanBookingContactEmail" value="#{bookingBean.booking.contactEmail}"/>
+			<h:outputText/>
+			<h:outputLabel for="bookingBeanBookingPerformance" value="Performance:"/>
+			<h:link id="bookingBeanBookingPerformance" outcome="/admin/performance/view" value="#{bookingBean.booking.performance}">
+				<f:param name="id" value="#{bookingBean.booking.performance.id}"/>
+			</h:link>
+			<h:outputText/>
+		</h:panelGrid>
+
+		<div class="buttons">
+			<h:link value="View All" outcome="search" styleClass="btn btn-primary"/> 
+			<h:link value="Edit" outcome="create" includeViewParams="true" styleClass="btn btn-primary"/>
+			<h:link value="Create New" outcome="create" styleClass="btn btn-primary"/>
+		</div>
+	</ui:define>
+
+</ui:composition>

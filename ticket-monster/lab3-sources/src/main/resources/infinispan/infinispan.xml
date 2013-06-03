@@ -1,0 +1,48 @@
+<infinispan
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:infinispan:config:5.2 http://www.infinispan.org/schemas/infinispan-config-5.2.xsd"
+        xmlns="urn:infinispan:config:5.2">
+
+    <global>
+    
+        <site local="${jgroups.relay2.site:LON}"/>
+	    <!-- Infinispan transport. References JGroups config file. -->
+        <transport clusterName="local-cluster" siteId="${jgroups.relay2.site:LON}">
+            <properties>
+        		<!-- configuration file of our local cluster transport. -->
+                <property name="configurationFile" value="infinispan/${jgroups.relay2.site:LON}.xml"/>
+            </properties>
+        </transport>
+
+    </global>
+
+    <default>
+
+        <locking concurrencyLevel="100" lockAcquisitionTimeout="1000"/>
+        <jmxStatistics enabled="true"/>
+        <clustering mode="distribution">
+            <hash numOwners="2"/>
+            <sync/>
+        </clustering>
+       
+    </default>
+
+    <namedCache name="TICKETMONSTER_CARTS">
+		<clustering mode="distribution">
+            <hash numOwners="1"/>
+            <sync/>
+        </clustering>
+  		<sites>
+        	<backups>
+                <backup site="NYC" backupFailurePolicy="WARN" strategy="SYNC" timeout="12000">
+                    <takeOffline afterFailures="3" minTimeToWait="10000"/>
+                </backup>
+                <backup site="LON" backupFailurePolicy="WARN" strategy="SYNC" timeout="12000">
+                    <takeOffline afterFailures="3" minTimeToWait="10000"/>
+                </backup>
+            </backups>
+        </sites>      
+
+    </namedCache>
+
+</infinispan>

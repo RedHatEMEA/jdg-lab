@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="page" value="#{eventBean.page}"/>
+		<f:event type="preRenderView" listener="#{eventBean.paginate}"/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="Search Event entities"/>
+
+	<ui:define name="header">
+		Event
+	</ui:define>
+
+	<ui:define name="subheader">
+		Search Event entities
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:form id="search">
+			<f:validateBean disabled="true">
+				<h:panelGroup styleClass="search">
+
+					<h:panelGrid columnClasses="label,component,required" columns="3">
+						<h:outputLabel for="eventBeanExampleName" value="Name:"/>
+						<h:panelGroup>
+							<h:inputText id="eventBeanExampleName" maxLength="50" value="#{eventBean.example.name}"/>
+							<h:message for="eventBeanExampleName" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="eventBeanExampleMediaItem" value="Media Item:"/>
+						<h:panelGroup>
+							<h:selectOneMenu converter="#{mediaItemBean.converter}" id="eventBeanExampleMediaItem" value="#{eventBean.example.mediaItem}">
+								<f:selectItem/>
+								<f:selectItems value="#{mediaItemBean.all}"/>
+							</h:selectOneMenu>
+							<h:message for="eventBeanExampleMediaItem" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="eventBeanExampleCategory" value="Category:"/>
+						<h:panelGroup>
+							<h:selectOneMenu converter="#{eventCategoryBean.converter}" id="eventBeanExampleCategory" value="#{eventBean.example.category}">
+								<f:selectItem/>
+								<f:selectItems value="#{eventCategoryBean.all}"/>
+							</h:selectOneMenu>
+							<h:message for="eventBeanExampleCategory" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+						<h:outputLabel for="eventBeanExampleDescription" value="Description:"/>
+						<h:panelGroup>
+							<h:inputText id="eventBeanExampleDescription" maxLength="1000" value="#{eventBean.example.description}"/>
+							<h:message for="eventBeanExampleDescription" styleClass="error"/>
+						</h:panelGroup>
+						<h:outputText/>
+					</h:panelGrid>
+					<h:panelGroup styleClass="buttons">
+						<h:commandLink value="Search" action="#{eventBean.search}" styleClass="btn btn-primary"/>
+						<h:commandLink value="Create New" action="#{eventBean.create}" styleClass="btn btn-primary"/>
+					</h:panelGroup>
+				</h:panelGroup>
+			</f:validateBean>
+			
+			<h:dataTable id="eventBeanPageItems" styleClass="data-table" value="#{eventBean.pageItems}" var="_item">
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Name"/>
+					</f:facet>
+					<h:link outcome="/admin/event/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="itemName" value="#{_item.name}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Category"/>
+					</f:facet>
+					<h:link outcome="/admin/event/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="itemCategory" value="#{_item.category}"/>
+					</h:link>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="Description"/>
+					</f:facet>
+					<h:link outcome="/admin/event/view">
+						<f:param name="id" value="#{_item.id}"/>
+						<h:outputText id="itemDescription" value="#{_item.description}"/>
+					</h:link>
+				</h:column>
+			</h:dataTable>
+			<ui:include src="/resources/scaffold/paginator.xhtml">
+				<ui:param name="paginatorBean" value="#{eventBean}"/>
+			</ui:include>
+		</h:form>
+			
+	</ui:define>
+
+</ui:composition>

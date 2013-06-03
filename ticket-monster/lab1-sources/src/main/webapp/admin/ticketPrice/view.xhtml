@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/resources/scaffold/pageTemplate.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="id" value="#{ticketPriceBean.id}"/>
+		<f:event type="preRenderView" listener="#{ticketPriceBean.retrieve}"/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="View Ticket Price"/>
+
+	<ui:define name="header">
+		Ticket Price
+	</ui:define>
+
+	<ui:define name="subheader">
+		View existing Ticket Price
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:panelGrid columnClasses="label,component,required" columns="3">
+			<h:outputLabel for="ticketPriceBeanTicketPriceShow" value="Show:"/>
+			<h:link id="ticketPriceBeanTicketPriceShow" outcome="/admin/show/view" value="#{ticketPriceBean.ticketPrice.show}">
+				<f:param name="id" value="#{ticketPriceBean.ticketPrice.show.id}"/>
+			</h:link>
+			<h:outputText/>
+			<h:outputLabel for="ticketPriceBeanTicketPriceSection" value="Section:"/>
+			<h:link id="ticketPriceBeanTicketPriceSection" outcome="/admin/section/view" value="#{ticketPriceBean.ticketPrice.section}">
+				<f:param name="id" value="#{ticketPriceBean.ticketPrice.section.id}"/>
+			</h:link>
+			<h:outputText/>
+			<h:outputLabel for="ticketPriceBeanTicketPriceTicketCategory" value="Ticket Category:"/>
+			<h:link id="ticketPriceBeanTicketPriceTicketCategory" outcome="/admin/ticketCategory/view" value="#{ticketPriceBean.ticketPrice.ticketCategory}">
+				<f:param name="id" value="#{ticketPriceBean.ticketPrice.ticketCategory.id}"/>
+			</h:link>
+			<h:outputText/>
+			<h:outputLabel for="ticketPriceBeanTicketPricePrice" value="Price:"/>
+			<h:outputText id="ticketPriceBeanTicketPricePrice" value="#{ticketPriceBean.ticketPrice.price}"/>
+			<h:outputText/>
+		</h:panelGrid>
+
+		<div class="buttons">
+			<h:link value="View All" outcome="search" styleClass="btn btn-primary"/> 
+			<h:link value="Edit" outcome="create" includeViewParams="true" styleClass="btn btn-primary"/>
+			<h:link value="Create New" outcome="create" styleClass="btn btn-primary"/>
+		</div>
+	</ui:define>
+
+</ui:composition>

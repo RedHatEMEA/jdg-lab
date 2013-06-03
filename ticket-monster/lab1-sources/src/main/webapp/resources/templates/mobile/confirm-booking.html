@@ -1,0 +1,19 @@
+<div data-role="header">
+    <h1>Confirm order</h1>
+</div>
+<div data-role="content">
+    <h3><%=show.event.name%></h3>
+    <p><%=show.venue.name%></p>
+    <p><small><%=new Date(performance.date).toPrettyString()%></small></p>
+    <p><strong>Buyer:</strong>  <emphasis><%=email%></emphasis></p>
+    <div id="ticketSummaryView"/>
+
+</div>
+
+<div data-role="footer" class="ui-bar">
+    <div class="ui-grid-b">
+        <div class="ui-block-a"><a id="cancel" href="#" data-role="button" data-icon="delete">Cancel</a></div>
+        <div class="ui-block-b"><a id="goBack" data-role="button" data-icon="back">Back</a></div>
+        <div class="ui-block-c"><a id="saveBooking" data-icon="check" data-role="button">Buy!</a></div>
+    </div>
+</div>
