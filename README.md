@@ -300,16 +300,16 @@ template to be used for the various types of clustered caches in this lab.  Perf
 In a typical clustered deployment, cache nodes in a cluster would be deployed on different machines which contain 
 the same server binaries and configuration (well, that is mostly the case).  This type of environment can be simulated 
 on a standalone workstation by starting up JVM processes from copies of binaries with services bound to different sockets.
-This can be done by either by configuring the processes to bind to different network interfaces or using port-offsets 
+This can be done either by configuring the processes to bind to different network interfaces or using port-offsets 
 on the same network interface.  Using a port-offset is much less complicated than the alternatives and will be done 
 for this lab.  Perform the following:
 
 1.  Make two copies of the binaries for the JDG Server, named 'node1' and 'node2'.  (*Note: Different copies of the server binaries are used as some shared state about the running container is kept.*)
-2.  In a console, navigate to the /bin directory of node1 and run the following (*Note: Unique server name attributes are required for each node.  Selecting the TCP JGroups stack from the configuration.*):
+2.  In a console, navigate to the /bin directory of node1 and run the following (*Note: Unique server name attributes (-Djboss.server.name) are required for each node.  The '-Djboss.default.jgroups.stack=tcp' selects the TCP JGroups stack from the configuration.*):
 		
 		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node1 -Djboss.default.jgroups.stack=tcp
 		
-3.  In a separate console, navigate to the /bin directory of node1 and run the following (*Note: port-offset increments the port numbers to prevent clashes between the instances*):
+3.  In a separate console, navigate to the /bin directory of node2 and run the following (*Note: port-offset increments the port numbers to prevent clashes between the instances*):
 
 		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node2 -Djboss.default.jgroups.stack=tcp -Djboss.socket.binding.port-offset=100
 		
@@ -384,7 +384,7 @@ as the client has transparently failed over to the identical, replicated instanc
 
 The configuration for a distributed cache is very similar to a replicated cache.  Both require
 configuration of a connector, jgroups, and caches in the cache-container.  The tag for a distributed
-cache in JDG Server is, as you would guess, the *<distributed-cache>* tag.  Because the configurations is similar to
+cache in JDG Server is, as you would guess, the 'distributed-cache' tag.  Because the configuration is similar to
 a replicated cache, we will use the configuration from the previous section as a baseline.  To set up the
 cache, perform the following:
 
