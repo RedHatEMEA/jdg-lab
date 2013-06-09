@@ -10,7 +10,71 @@ lab was created on a Fedora System and some details may have been missed.  Pleas
 
 Pre-Lab:  Setting up your environment
 -------------------------------------
-((Revisit))
+The lab instructor will provide a USB stick containing all necessary libraries to complete the
+lab.  The following are the required to complete the lab:
+
+* java JDK (version 6 or above)
+
+* maven 3.x
+
+* JBoss Enterprise Application Platform (EAP) 6.x
+
+* JBoss Data Grid Server 6.1
+
+* JBoss Data Grid Library 6.1
+
+* JBoss Data Grid Maven Repository 6.1
+
+Copies of the aforementioned can be found in the jdg-lab/binaries path of the USB drive.
+
+###Installing Java
+
+It is expected that participants have general Java knowledge and ideally already have the full JDK 
+installed, version 6 or higher (JDK is required for using jconsole and other utilities).  
+Versions of JDK 7 for Linux, Mac, and Windows have been provided in case the particpant does not
+have the full library available, they can be found at:
+	
+		jdg-library/binaries/jdk-7u21-linux-x64.tar.gz (Linux)
+		jdg-library/binaries/jdk-7u21-macosx-x64.dmg (Mac)
+		jdg-library/binaries/jdk-7u21-windows-i586.exe (Windows 32-bit)
+		jdg-library/binaries/jdk-7u21-windows-x64.exe (Windows 64-bit)
+		
+General usage of Java is not in the scope of this lab.  The participant should ensure that the correct
+version of Java is being used via path or system variables.
+
+###Installing and Configuring Maven
+
+Maven is the core technology used in the labs to build and package java artifacts.  A distribution
+of maven 3.0.5 has been provided in the jdg-lab/binaries folder of the USB drive.  Versions for both
+Linux (+Mac) and Windows have been provided:
+
+		jdg-lab/binaries/apache-maven-3.0.5-bin.tar.gz (Linux)
+		jdg-lab/binaries/apache-maven-3.0.5-bin.zip (Windows)
+		
+Maven can simply be unzipped and executed by <MAVEN_HOME>/bin/mvn.  In order to prevent mass downloads
+of libraries by all participants in the class, a fully seeded repository has been provided.  The seeded repository can be
+found on the USB drive at the following location:
+
+		jdg-lab/repository
+		
+Maven needs to be configured to use this repository as the default is <USER_HOME>/.m2/repository.  This can be done 
+by modifying the <localRepository> element in <MAVEN_HOME>/conf/settings.xml.
+
+In a more traditional setup, the repository would be extended by adding the JBoss 6.1 Maven repository.  The repository 
+can be found at the following location:
+
+		/jdg-lab/binaries/jboss-datagrid-maven-repository-6.1.0.GA.zip
+		
+**NOTE: The correct maven executable needs to be called.  This can be managed by either explicitly calling the executable or by modifying the path.**
+	
+###Setting up JBoss Developer Studio
+
+A universal installer for Jboss Developer Studio 6 has been provided at the following location:
+
+		/jdg-lab/binaries/jbdevstudio-product-universal-6.0.1.GA-v20130327-2052-B361.jar
+		
+The installer will walk you through the process of installing the IDE.
+
 
 Lab 1:  Hot Rod Client
 ----------------------
@@ -40,9 +104,9 @@ The **standalone** variety is the simplest cache mode as it does not need to dis
 members.  For convenience, JBoss Data Grid Server provides a basic startup script and configuration files demonstrating
 a standalone cache.  These files can be found in the following locations:
     
-    <JDG_SERVER_HOME>/bin/standalone.[sh/bat]
-    <JDG_SERVER_HOME>/standalone/configuration/standalone.xml
-    <JDG_SERVER_HOME>/standalone/configuration/standalone.[conf | conf.bat]
+    		<JDG_SERVER_HOME>/bin/standalone.[sh/bat]
+    		<JDG_SERVER_HOME>/standalone/configuration/standalone.xml
+    		<JDG_SERVER_HOME>/standalone/configuration/standalone.[conf | conf.bat]
 
 By default, the standalone script starts up a streamlined JBoss EAP server configured with the
 standalone.xml file.  Alternatively, the configuration file can be overridden by passing the '-c'
@@ -114,7 +178,7 @@ _NOTE: The script searches for the configuration file relative to the configurat
 
 ### Firing up the Client Application
 
-_NOTE: The following build command assumes you have configured your Maven user settings. If you have not, you must include Maven setting arguments on the command line. See [Build and Deploy the Quickstarts](../README.md#buildanddeploy) for complete instructions and additional options._
+_NOTE: The following build command assumes you have configured your Maven user settings. If you have not, you must include Maven setting arguments on the command line. See [Build and Deploy the Quickstarts](./README.md#maven) for complete instructions and additional options._
 
 1. Open a command line and navigate to the lab1-basic-hotrot-client directory in this package.
 2. Type this command to build and deploy the archive:
