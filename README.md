@@ -305,7 +305,8 @@ on the same network interface.  Using a port-offset is much less complicated tha
 for this lab.  Perform the following:
 
 1.  Make two copies of the binaries for the JDG Server, named 'node1' and 'node2'.  (*Note: Different copies of the server binaries are used as some shared state about the running container is kept.*)
-2.  In a console, navigate to the /bin directory of node1 and run the following (*Note: Unique server name attributes (-Djboss.server.name) are required for each node.  The '-Djboss.default.jgroups.stack=tcp' selects the TCP JGroups stack from the configuration.*):
+
+2.  In a console, navigate to the /bin directory of node1 and run the following (*Note: Unique server name attributes '-Djboss.server.name' are required for each node.  The '-Djboss.default.jgroups.stack=tcp' selects the TCP JGroups stack from the configuration.):*
 		
 		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node1 -Djboss.default.jgroups.stack=tcp
 		
