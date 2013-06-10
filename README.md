@@ -42,7 +42,7 @@ have the full library available, they can be found at:
 General usage of Java is not in the scope of this lab.  The participant should ensure that the correct
 version of Java is being used via path or system variables.
 
-###Installing and Configuring Maven
+###Installing and Configuring Maven [maven] ##
 
 Maven is the core technology used in the labs to build and package java artifacts.  A distribution
 of maven 3.0.5 has been provided in the jdg-lab/binaries folder of the USB drive.  Versions for both
@@ -58,7 +58,7 @@ found on the USB drive at the following location:
 		jdg-lab/repository
 		
 Maven needs to be configured to use this repository as the default is <USER_HOME>/.m2/repository.  This can be done 
-by modifying the <localRepository> element in <MAVEN_HOME>/conf/settings.xml.
+by modifying the 'localRepository' element in <MAVEN_HOME>/conf/settings.xml.
 
 In a more traditional setup, the repository would be extended by adding the JBoss 6.1 Maven repository.  The repository 
 can be found at the following location:
@@ -119,7 +119,7 @@ Perform the following:
 
 * Make a copy of standalone.xml in the same folder and call it standalone-lab1.xml
 
-* Modify standalone-lab1.xml - Replace the existing datasources subsystem with the following:    
+* Modify standalone-lab1.xml.  Replace the existing datasources subsystem with the following:    
     
     	<subsystem xmlns="urn:jboss:domain:datasources:1.0">            	    
 	        <!-- Define this Datasource with jndi name  java:jboss/datasources/ExampleDS -->
@@ -144,7 +144,7 @@ Perform the following:
 	        </datasources>	    
 		</subsystem>
 		
-* Modify standalone-lab1.xml - Add the following cache within the 'local' cache-container of the urn:infinispan:server:core subsystem:
+* Modify standalone-lab1.xml.  Add the following cache within the 'local' cache-container of the urn:infinispan:server:core subsystem:
 
 		<!-- ADD a local cache called 'teams' -->
 		<local-cache name="teams" start="EAGER" batching="false" indexing="NONE" >
@@ -211,7 +211,7 @@ Type `q` one more time to exit the application.
 JBoss Data Grid Server provides various information via MBeans in order to manage and monitor
 key components.  Inspect the server by performing the following steps:
     
-1.  Run jconsole as the same user that started JBoss Data Grid Server.  jconsole can be found at the following location *<JDK_HOME>/lib/jconsole*.
+1.  Run jconsole as the same user that started JBoss Data Grid Server.  jconsole can be found at the following location *<JDK\_HOME>/lib/jconsole*.
 2.  Select the process starting with jboss-modules.jar
 3.  Navigate to the MBEANS tab
 4.  For the purpose of this lab, the most interesting MBeans can be found by expanding jboss.infinispan. 
