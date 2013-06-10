@@ -42,7 +42,7 @@ have the full library available, they can be found at:
 General usage of Java is not in the scope of this lab.  The participant should ensure that the correct
 version of Java is being used via path or system variables.
 
-###Installing and Configuring Maven [maven] ##
+###Installing and Configuring Maven
 
 Maven is the core technology used in the labs to build and package java artifacts.  A distribution
 of maven 3.0.5 has been provided in the jdg-lab/binaries folder of the USB drive.  Versions for both
@@ -51,11 +51,11 @@ Linux (+Mac) and Windows have been provided:
 		jdg-lab/binaries/apache-maven-3.0.5-bin.tar.gz (Linux)
 		jdg-lab/binaries/apache-maven-3.0.5-bin.zip (Windows)
 		
-Maven can simply be unzipped and executed by <MAVEN_HOME>/bin/mvn.  In order to prevent mass downloads
+Maven can simply be unzipped and executed by 'MAVEN\_HOME>/bin/mvn'.  In order to prevent mass downloads
 of libraries by all participants in the class, a fully seeded repository has been provided.  The seeded repository can be
 found on the USB drive at the following location:
 
-		jdg-lab/repository
+		jdg-lab/maven/repository
 		
 Maven needs to be configured to use this repository as the default is <USER_HOME>/.m2/repository.  This can be done 
 by modifying the 'localRepository' element in <MAVEN_HOME>/conf/settings.xml.
@@ -63,7 +63,7 @@ by modifying the 'localRepository' element in <MAVEN_HOME>/conf/settings.xml.
 In a more traditional setup, the repository would be extended by adding the JBoss 6.1 Maven repository.  The repository 
 can be found at the following location:
 
-		/jdg-lab/binaries/jboss-datagrid-maven-repository-6.1.0.GA.zip
+		jdg-lab/binaries/jboss-datagrid-maven-repository-6.1.0.GA.zip
 		
 **NOTE: The correct maven executable needs to be called.  This can be managed by either explicitly calling the executable or by modifying the path.**
 	
@@ -71,7 +71,7 @@ can be found at the following location:
 
 A universal installer for Jboss Developer Studio 6 has been provided at the following location:
 
-		/jdg-lab/binaries/jbdevstudio-product-universal-6.0.1.GA-v20130327-2052-B361.jar
+		jdg-lab/binaries/jbdevstudio-product-universal-6.0.1.GA-v20130327-2052-B361.jar
 		
 The installer will walk you through the process of installing the IDE.
 
@@ -98,6 +98,8 @@ or print a list of the current teams and players using the Hot Rod based connect
 
 In this lab, we will connect to caches configured in the different modes, namely the **standalone**
 , **replicated**, and **distributed** modes.
+
+**NOTE: The source and other content for this lab can be found in the USB drive at jdg-lab/hotrod-lab**
 
 ### Configuring a Standalone Cache
 The **standalone** variety is the simplest cache mode as it does not need to discover or communicate its state with other 
