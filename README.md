@@ -306,15 +306,13 @@ This can be done either by configuring the processes to bind to different networ
 on the same network interface.  Using a port-offset is much less complicated than the alternatives and will be done 
 for this lab.  Perform the following:
 
-1.  Make two copies of the binaries for the JDG Server, named 'node1' and 'node2'.  (*Note: Different copies of the server binaries are used as some shared state about the running container is kept.*)
-
-2.  In a console, navigate to the /bin directory of node1 and run the following (*Note: Unique server name attributes '-Djboss.server.name' are required for each node.  The '-Djboss.default.jgroups.stack=tcp' selects the TCP JGroups stack from the configuration.):*
+1.  In a console, navigate to the /bin directory of node1 and run the following (*Note: Unique server name attributes '-Djboss.server.name' are required for each node.  The '-Djboss.default.jgroups.stack=tcp' selects the TCP JGroups stack from the configuration.):*
 		
 		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node1 -Djboss.default.jgroups.stack=tcp
 		
-3.  In a separate console, navigate to the /bin directory of node2 and run the following (*Note: port-offset increments the port numbers to prevent clashes between the instances*):
+2.  In a separate console (bin directory should still be up), run the following (*Note(s): port-offset increments the port numbers to prevent clashes between the instances.  Changing the server.data.dir keeps all semi-permanent state in a different directory*):
 
-		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node2 -Djboss.default.jgroups.stack=tcp -Djboss.socket.binding.port-offset=100
+		clustered.[sh | bat] -c clustered_replicated.xml -Djboss.server.name=node2 -Djboss.default.jgroups.stack=tcp -Djboss.socket.binding.port-offset=100 -Djboss.server.data.dir=data-node2
 		
 *NOTE: The process should be run by a user with permissions to set up a reasonable amount of threads.  In linux, you should use sudo or ensure your user is able to start an adequate amount of processes.*
 
